@@ -69,9 +69,9 @@ class FilamentMediaLibrary implements Plugin
 
     public function register(Panel $panel): void
     {
-        Livewire::component('media-library::media.upload-media', $this->getUploadMediaComponent());
-        Livewire::component('media-library::media.media-info', $this->getMediaInfoComponent());
-        Livewire::component('media-library::media.browse-library', $this->getBrowseLibraryComponent());
+        Livewire::component('media-library.media.upload-media', $this->getUploadMediaComponent());
+        Livewire::component('media-library.media.media-info', $this->getMediaInfoComponent());
+        Livewire::component('media-library.media.browse-library', $this->getBrowseLibraryComponent());
 
         $panel->pages($this->getRegistrablePages());
     }

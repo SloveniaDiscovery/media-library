@@ -53,8 +53,8 @@ class FilamentMediaLibraryServiceProvider extends PackageServiceProvider
             fn (): View => view('media-library::forms.components.media-picker.modal')
         );
 
-        Livewire::component('media-library::media.upload-media', UploadMedia::class);
-        Livewire::component('media-library::media.media-info', MediaInfo::class);
-        Livewire::component('media-library::media.browse-library', BrowseLibrary::class);
+        Livewire::component('media-library.media.upload-media', UploadMedia::class);
+        Livewire::component('media-library.media.media-info', MediaInfo::class);
+        Livewire::component('media-library.media.browse-library', BrowseLibrary::class);
     }
 }
