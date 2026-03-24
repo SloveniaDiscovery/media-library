@@ -88,41 +88,39 @@ class MediaLibraryItem extends Model implements HasMedia
 
     public function addOrReplaceUpload(UploadedFile $uploadedFile): static
     {
-        return DB::transaction(function () use ($uploadedFile) {
-            if ($uploadedFile->getClientOriginalName() === 'blob') {
-                $fileName = 'blob.' . $uploadedFile->getClientOriginalExtension();
-            } else {
-                // Prevent filenames like example.jpeg.jpeg.
-                $fileName = Str::of($uploadedFile->getClientOriginalName())
-                    ->replace('.' . $uploadedFile->getClientOriginalExtension() . '.' . $uploadedFile->getClientOriginalExtension(), '.' . $uploadedFile->getClientOriginalExtension());
-            }
+        if ($uploadedFile->getClientOriginalName() === 'blob') {
+            $fileName = 'blob.' . $uploadedFile->getClientOriginalExtension();
+        } else {
+            // Prevent filenames like example.jpeg.jpeg.
+            $fileName = Str::of($uploadedFile->getClientOriginalName())
+                ->replace('.' . $uploadedFile->getClientOriginalExtension() . '.' . $uploadedFile->getClientOriginalExtension(), '.' . $uploadedFile->getClientOriginalExtension());
+        }
 
-            try {
-                $disk = config('livewire.temporary_file_upload.disk', 'default');
+        try {
+            $disk = config('livewire.temporary_file_upload.disk', 'default');
 
-                $pathToTemporaryLivewireFile = (string) Str::of($uploadedFile->getRealPath())
-                    ->after(Storage::disk($disk)->path('/'))
-                    ->ltrim('/');
+            $pathToTemporaryLivewireFile = (string) Str::of($uploadedFile->getRealPath())
+                ->after(Storage::disk($disk)->path('/'))
+                ->ltrim('/');
 
-                $this
-                    ->addMediaFromDisk($pathToTemporaryLivewireFile, $disk)
-                    ->usingName($fileName)
-                    ->usingFileName($fileName)
-                    ->toMediaCollection($this->getMediaLibraryCollectionName())
-                    ->save();
-            } catch (FileCannotBeAdded $e) {
-                $this
-                    ->addMedia($uploadedFile)
-                    ->usingName($fileName)
-                    ->usingFileName($fileName)
-                    ->toMediaCollection($this->getMediaLibraryCollectionName())
-                    ->save();
-            }
+            $this
+                ->addMediaFromDisk($pathToTemporaryLivewireFile, $disk)
+                ->usingName($fileName)
+                ->usingFileName($fileName)
+                ->toMediaCollection($this->getMediaLibraryCollectionName())
+                ->save();
+        } catch (FileCannotBeAdded $e) {
+            $this
+                ->addMedia($uploadedFile)
+                ->usingName($fileName)
+                ->usingFileName($fileName)
+                ->toMediaCollection($this->getMediaLibraryCollectionName())
+                ->save();
+        }
 
-            Cache::forget($this->getParsedItemCacheKey());
+        Cache::forget($this->getParsedItemCacheKey());
 
-            return $this;
-        });
+        return $this;
     }
 
     public function getItem(?string $collection = null): Media

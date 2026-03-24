@@ -341,7 +341,7 @@ class MediaInfo extends Component implements HasForms, HasActions
             return;
         }
 
-        $this->getMediaProperty()->addOrReplaceUpload($this->replaceMediaUpload);
+        DB::transaction(fn () => $this->getMediaProperty()->addOrReplaceUpload($this->replaceMediaUpload));
 
         $this->setMedia($this->mediaItemId, $this->lockedMediaLibraryFolder?->getKey());
 
